@@ -8,12 +8,12 @@
 # (at your option) any later version.
 #
 
-SUBDIRS = scripts
+ALL = axify
 
-include Makefile.ax
+include ../Makefile.ax
 
 install-local:
 	install -d -o $(USER) -g $(GROUP) -m 755 \
-	 $(DESTDIR)$(PREFIX)/share/ax-make
-	install -p -o $(USER) -g $(GROUP) -m 644 Makefile.ax \
-	 $(DESTDIR)$(PREFIX)/share/ax-make/Makefile.ax
+	 $(DESTDIR)$(PREFIX)/bin
+	install -p -o $(USER) -g $(GROUP) -m 755 axify \
+	 $(DESTDIR)$(PREFIX)/bin/axify

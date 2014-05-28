@@ -1,0 +1,72 @@
+#!/bin/sh
+#
+# ax-make: Alex' Simple Makefile System
+# Copyright (c)2014 Alexander Barton (alex@barton.de)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+
+NAME=`basename "$0"`
+
+[ -n "$1" ] && LIB_D="$1" || LIB_D="."
+
+if [ -r "/usr/local/share/ax-make/Makefile.ax" ]; then
+	MAKEFILE_AX="/usr/local/share/ax-make/Makefile.ax"
+elif [ -r "/usr/share/ax-make/Makefile.ax" ]; then
+	MAKEFILE_AX="/usr/share/ax-make/Makefile.ax"
+else
+	echo "$NAME: No source \"Makefile.ax\" found!"
+	echo "$NAME: Please check your installation of \"ax-make\" and try again."
+	exit 1
+fi
+
+# -- Makefile.ax --
+
+[ ! -d "$LIB_D" ] && mkdir -pv "$LIB_D"
+if [ "$MAKEFILE_AX" -nt "$LIB_D/`basename "$MAKEFILE_AX"`" ]; then
+	echo "Updating \"$LIB_D/`basename "$MAKEFILE_AX"`\" ..."
+	cp -v "$MAKEFILE_AX" "$LIB_D/`basename "$MAKEFILE_AX"`" || exit 1
+else
+	echo "Makefile \"$LIB_D/`basename "$MAKEFILE_AX"`\" is up to date."
+fi
+
+# -- Project Makefile's ---
+
+if [ ! -e "Makefile" ]; then
+echo "Creating \"Makefile\" ..."
+[ "$LIB_D" != "." ] && subdirs="$LIB_D" || subdirs=""
+cat >"Makefile" <<EOF
+#
+# Makefile
+#
+
+SUBDIRS = $subdirs
+
+include $LIB_D/Makefile.ax
+EOF
+fi
+
+if [ "$LIB_D" != "." -a ! -e "$LIB_D/Makefile" ]; then
+echo "Creating \"$LIB_D/Makefile\" ..."
+cat >"$LIB_D/Makefile" <<EOF
+#
+# Makefile
+#
+
+include Makefile.ax
+EOF
+fi
+
+# --- Standard project files ---
+
+for f in AUTHORS COPYING README; do
+	if [ ! -e "$f" ]; then
+		echo "Creating empty \"$f\" ..."
+		touch "$f"
+	fi
+done
+
+exit 0
