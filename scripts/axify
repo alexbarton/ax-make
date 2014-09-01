@@ -26,11 +26,13 @@ fi
 # -- Makefile.ax --
 
 [ ! -d "$LIB_D" ] && mkdir -pv "$LIB_D"
-if [ "$MAKEFILE_AX" -nt "$LIB_D/`basename "$MAKEFILE_AX"`" ]; then
-	echo "Updating \"$LIB_D/`basename "$MAKEFILE_AX"`\" ..."
-	cp -v "$MAKEFILE_AX" "$LIB_D/`basename "$MAKEFILE_AX"`" || exit 1
+
+target="$LIB_D/`basename "$MAKEFILE_AX"`"
+if [ ! -e "$target" -o "$MAKEFILE_AX" -nt "$target" ]; then
+	echo "Updating \"$target\" ..."
+	cp -v "$MAKEFILE_AX" "$target" || exit 1
 else
-	echo "Makefile \"$LIB_D/`basename "$MAKEFILE_AX"`\" is up to date."
+	echo "Makefile \"$target\" is up to date."
 fi
 
 # -- Project Makefile's ---
