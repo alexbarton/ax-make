@@ -12,15 +12,58 @@
 NAME=`basename "$0"`
 
 Usage() {
-	echo "Usage: $NAME [<lib-dir>]"
+	echo "Usage: $NAME [-2|-3|-l <lic>] [<lib-dir>]"
+	echo
+	echo '  -2           Use the GNU GPLv2 for the COPYING file.'
+	echo '  -3           Use the GNU GPLv3 for the COPYING file.'
+	echo '  -l <lic>     Specify license to use for the COPYING file:'
+	echo '               <lic> can be "gpl2", "gpl3", "lgpl21", "lgpl3".'
+	echo '               By default an empty COPYING file is created.'
 	echo
 	echo "  <lib-dir>    Library directory. Default: current working directory."
 	echo
 	exit 2
 }
 
+Download() {
+	URL="$1"
+	FILE="$2"
+
+	echo "Downloading $URL to $FILE ..."
+
+	curl --version >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		curl -#o "$FILE" "$URL" && return 0
+		echo "Failed to download $URL! [curl]"
+		return 1
+	fi
+
+	wget --version >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		wget -qO "$FILE" --show-progress "$URL" && return 0
+		echo "Failed to download $URL! [wget]"
+		return 1
+	fi
+
+	echo "Can't download $URL, no download tool found!"
+	return 1
+}
+
+LIB_D="."
+LICENSE=""
+
 while true; do
 	case "$1" in
+		"-2")
+			LICENSE="gpl2"
+			;;
+		"-3")
+			LICENSE="gpl3"
+			;;
+		"-l")
+			LICENSE="$2"
+			shift
+			;;
 		"-"*)
 			Usage
 			;;
@@ -33,7 +76,7 @@ done
 
 [ $# -gt 1 ] && Usage
 
-[ -n "$1" ] && LIB_D="$1" || LIB_D="."
+[ -n "$1" ] && LIB_D="$1"
 
 if [ -r "/usr/local/share/ax-make/Makefile.ax" ]; then
 	MAKEFILE_AX="/usr/local/share/ax-make/Makefile.ax"
@@ -93,6 +136,32 @@ if [ ! -e AUTHORS ]; then
 		echo "Creating \"AUTHORS\" file ..."
 		echo "`git config user.name` <`git config user.email`>" >>AUTHORS
 	fi
+fi
+
+if [ ! -e COPYING ]; then
+	LICENSE_URL=""
+	case "$LICENSE" in
+		"")
+			;;
+		"gpl2")
+			LICENSE_URL="http://www.gnu.org/licenses/gpl-2.0.txt"
+			;;
+		"gpl3")
+			LICENSE_URL="http://www.gnu.org/licenses/gpl-3.0.txt"
+			;;
+		"lgpl21")
+			LICENSE_URL="https://www.gnu.org/licenses/lgpl-2.1.txt"
+			;;
+		"lgpl3")
+			LICENSE_URL="https://www.gnu.org/licenses/lgpl-3.0.txt"
+			;;
+		*)
+			echo "Can't setup unknown \"$LICENSE\" license!"
+			;;
+	esac
+	[ -n "$LICENSE_URL" ] && Download "$LICENSE_URL" COPYING
+else
+	[ -n "$LICENSE" ] && echo "COPYING file already exists, skipping."
 fi
 
 for f in AUTHORS COPYING README; do
