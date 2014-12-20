@@ -25,7 +25,9 @@ fi
 
 # -- Makefile.ax --
 
-[ ! -d "$LIB_D" ] && mkdir -pv "$LIB_D"
+if [ ! -d "$LIB_D" ]; then
+	mkdir -pv "$LIB_D" || exit 1
+fi
 
 target="$LIB_D/`basename "$MAKEFILE_AX"`"
 if [ ! -e "$target" -o "$MAKEFILE_AX" -nt "$target" ]; then
