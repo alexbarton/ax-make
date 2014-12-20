@@ -88,16 +88,14 @@ fi
 
 # --- Standard project files ---
 
-authors=AUTHORS
 if [ ! -e AUTHORS ]; then
 	if git --version >/dev/null 2>&1; then
 		echo "Creating \"AUTHORS\" file ..."
 		echo "`git config user.name` <`git config user.email`>" >>AUTHORS
-		authors=
 	fi
 fi
 
-for f in $authors COPYING README; do
+for f in AUTHORS COPYING README; do
 	if [ ! -e "$f" ]; then
 		echo "Creating empty \"$f\" file ..."
 		touch "$f"
