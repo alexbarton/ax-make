@@ -11,6 +11,28 @@
 
 NAME=`basename "$0"`
 
+Usage() {
+	echo "Usage: $NAME [<lib-dir>]"
+	echo
+	echo "  <lib-dir>    Library directory. Default: current working directory."
+	echo
+	exit 2
+}
+
+while true; do
+	case "$1" in
+		"-"*)
+			Usage
+			;;
+		*)
+			break
+			;;
+	esac
+	shift
+done
+
+[ $# -gt 1 ] && Usage
+
 [ -n "$1" ] && LIB_D="$1" || LIB_D="."
 
 if [ -r "/usr/local/share/ax-make/Makefile.ax" ]; then
