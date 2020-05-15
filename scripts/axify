@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 #
 # ax-make: Alex' Simple Makefile System
-# Copyright (c)2014 Alexander Barton (alex@barton.de)
+# Copyright (c)2014-2020 Alexander Barton (alex@barton.de)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -9,7 +9,7 @@
 # (at your option) any later version.
 #
 
-NAME=`basename "$0"`
+NAME=$(basename "$0")
 
 Usage() {
 	echo "Usage: $NAME [-2|-3|-l <lic>] [<lib-dir>]"
@@ -31,15 +31,13 @@ Download() {
 
 	echo "Downloading $URL to \"$FILE\" ..."
 
-	curl --version >/dev/null 2>&1
-	if [ $? -eq 0 ]; then
+	if curl --version >/dev/null 2>&1; then
 		curl -#o "$FILE" "$URL" && return 0
 		echo "Failed to download $URL! [curl]"
 		return 1
 	fi
 
-	wget --version >/dev/null 2>&1
-	if [ $? -eq 0 ]; then
+	if wget --version >/dev/null 2>&1; then
 		wget -qO "$FILE" --show-progress "$URL" && return 0
 		echo "Failed to download $URL! [wget]"
 		return 1
@@ -94,8 +92,8 @@ if [ ! -d "$LIB_D" ]; then
 	mkdir -pv "$LIB_D" || exit 1
 fi
 
-target="$LIB_D/`basename "$MAKEFILE_AX"`"
-if [ ! -e "$target" -o "$MAKEFILE_AX" -nt "$target" ]; then
+target="$LIB_D/$(basename "$MAKEFILE_AX")"
+if [ ! -e "$target" ] || [ "$MAKEFILE_AX" -nt "$target" ]; then
 	echo "Updating \"$target\" ..."
 	cp -v "$MAKEFILE_AX" "$target" || exit 1
 else
@@ -118,7 +116,7 @@ include $LIB_D/Makefile.ax
 EOF
 fi
 
-if [ "$LIB_D" != "." -a ! -e "$LIB_D/Makefile" ]; then
+if [ "$LIB_D" != "." ] && [ ! -e "$LIB_D/Makefile" ]; then
 echo "Creating \"$LIB_D/Makefile\" ..."
 cat >"$LIB_D/Makefile" <<EOF
 #
@@ -134,7 +132,7 @@ fi
 if [ ! -e AUTHORS ]; then
 	if git --version >/dev/null 2>&1; then
 		echo "Creating \"AUTHORS\" file ..."
-		echo "`git config user.name` <`git config user.email`>" >>AUTHORS
+		echo "$(git config user.name) <$(git config user.email)>" >>AUTHORS
 	fi
 fi
 
