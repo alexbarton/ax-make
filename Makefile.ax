@@ -1,6 +1,6 @@
 #
 # ax-make: Alex' Simple Makefile System
-# Copyright (c)2014 Alexander Barton (alex@barton.de)
+# Copyright (c)2014-2020 Alexander Barton (alex@barton.de)
 #
 # This library is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
@@ -15,9 +15,15 @@ PREFIX ?= /usr/local
 USER ?= $(shell id -un)
 GROUP ?= $(shell stat --format=%G $(DESTDIR)$(PREFIX) 2>/dev/null || id -gn)
 
-all: all-ax all-local
-
-all-ax: $(ALL) $(SUBDIRS)
+ifndef AX_AUTO_RECURSE_DISABLE
+# Automatically recurse into all $(SUBDIR)s for the default target.
+default: $(ALL) $(SUBDIRS) all-local
+all: $(ALL) all-ax all-local
+else
+# Automatic recursion for default target is disabled!
+default: $(ALL) all-local
+all: $(ALL) all-ax all-local
+endif
 
 clean: clean-ax clean-local
 
@@ -35,6 +41,10 @@ all-ax clean-ax distclean-ax maintainer-clean-ax check-ax install-ax:
 	  echo "Making \"$$target\" in \"$$subdir\" ..."; \
 	  $(MAKE) -C $$subdir $$target || exit 1; \
 	 done
+
+$(SUBDIRS):
+	$(AX_SILENT)echo "Making default in \"$@\" ..."; \
+	 $(MAKE) -C "$@" || exit 1
 
 .PHONY: all clean distclean maintainer-clean check install
 .PHONY: all-ax clean-ax distclean-ax maintainer-clean-ax check-ax install-ax
