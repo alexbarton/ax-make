@@ -13,7 +13,7 @@ ALL = axify
 include ../Makefile.ax
 
 install-local:
-	install -d -o $(USER) -g $(GROUP) -m 755 \
-	 $(DESTDIR)$(PREFIX)/bin
-	install -p -o $(USER) -g $(GROUP) -m 755 axify \
-	 $(DESTDIR)$(PREFIX)/bin/axify
+	install -d -o "$(USER)" -g "$(GROUP)" -m 755 \
+	 "$(DESTDIR)$(PREFIX)/bin"
+	install -p -o "$(USER)" -g "$(GROUP)" -m 755 axify \
+	 "$(DESTDIR)$(PREFIX)/bin/axify"

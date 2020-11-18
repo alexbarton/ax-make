@@ -13,7 +13,7 @@ SUBDIRS = scripts
 include Makefile.ax
 
 install-local:
-	install -d -o $(USER) -g $(GROUP) -m 755 \
-	 $(DESTDIR)$(PREFIX)/share/ax-make
-	install -p -o $(USER) -g $(GROUP) -m 644 Makefile.ax \
-	 $(DESTDIR)$(PREFIX)/share/ax-make/Makefile.ax
+	install -d -o "$(USER)" -g "$(GROUP)" -m 755 \
+	 "$(DESTDIR)$(PREFIX)/share/ax-make"
+	install -p -o "$(USER)" -g "$(GROUP)" -m 644 Makefile.ax \
+	 "$(DESTDIR)$(PREFIX)/share/ax-make/Makefile.ax"
