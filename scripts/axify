@@ -120,6 +120,8 @@ cat >"Makefile" <<EOF
 # Makefile
 #
 
+SOURCE_ROOT ?= \$(CURDIR)
+
 SUBDIRS = $subdirs
 
 include $LIB_D/Makefile.ax
@@ -132,6 +134,8 @@ cat >"$LIB_D/Makefile" <<EOF
 #
 # Makefile
 #
+
+SOURCE_ROOT ?= \$(CURDIR)/..
 
 include Makefile.ax
 EOF
