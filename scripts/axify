@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # ax-make: Alex' Simple Makefile System
-# Copyright (c)2014-2020 Alexander Barton (alex@barton.de)
+# Copyright (c)2014-2022 Alexander Barton (alex@barton.de)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,11 +14,13 @@ NAME=$(basename "$0")
 Usage() {
 	echo "Usage: $NAME [-2|-3|-l <lic>] [<lib-dir>]"
 	echo
+	echo "  -0           Don't create AUTHORS, COPYING and README files."
 	echo '  -2           Use the GNU GPLv2 for the COPYING file.'
 	echo '  -3           Use the GNU GPLv3 for the COPYING file.'
 	echo '  -l <lic>     Specify license to use for the COPYING file:'
 	echo '               <lic> can be "gpl2", "gpl3", "lgpl21", "lgpl3".'
 	echo '               By default an empty COPYING file is created.'
+	echo '  -m           Use Markdown, create AUTHORS.md and README.md.'
 	echo
 	echo "  <lib-dir>    Library directory. Default: current working directory."
 	echo
@@ -49,9 +51,14 @@ Download() {
 
 LIB_D="."
 LICENSE=""
+ADD_FILES=1
+unset SUFFIX
 
 while true; do
 	case "$1" in
+		"-0")
+			unset ADD_FILES
+			;;
 		"-2")
 			LICENSE="gpl2"
 			;;
@@ -61,6 +68,9 @@ while true; do
 		"-l")
 			LICENSE="$2"
 			shift
+			;;
+		"-m")
+			SUFFIX=".md"
 			;;
 		"-"*)
 			Usage
@@ -129,10 +139,10 @@ fi
 
 # --- Standard project files ---
 
-if [ ! -e AUTHORS ]; then
+if [[ ! -e AUTHORS && -n "$ADD_FILES" ]]; then
 	if git --version >/dev/null 2>&1; then
-		echo "Creating \"AUTHORS\" file ..."
-		echo "$(git config user.name) <$(git config user.email)>" >>AUTHORS
+		echo "Creating \"AUTHORS$SUFFIX\" file ..."
+		echo "$(git config user.name) <$(git config user.email)>" >>"AUTHORS$SUFFIX"
 	fi
 fi
 
@@ -162,7 +172,14 @@ else
 	[ -n "$LICENSE" ] && echo "COPYING file already exists, skipping."
 fi
 
-for f in AUTHORS COPYING README; do
+files=()
+
+if [[ -n "$ADD_FILES" ]]; then
+	files+=(COPYING)
+	files+=("AUTHORS$SUFFIX" "README$SUFFIX")
+fi
+
+for f in "${files[@]}"; do
 	if [ ! -e "$f" ]; then
 		echo "Creating empty \"$f\" file ..."
 		touch "$f"
