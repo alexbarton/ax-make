@@ -35,7 +35,7 @@ Download() {
 	echo "Downloading $URL to \"$FILE\" ..."
 
 	if curl --version >/dev/null 2>&1; then
-		curl -#o "$FILE" "$URL" && return 0
+		curl -#Lo "$FILE" "$URL" && return 0
 		echo "Failed to download $URL! [curl]"
 		return 1
 	fi
@@ -157,13 +157,13 @@ if [[ ! -e COPYING ]]; then
 		"")
 			;;
 		"gpl2")
-			LICENSE_URL="http://www.gnu.org/licenses/gpl-2.0.txt"
+			LICENSE_URL="https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt"
 			;;
 		"gpl3")
-			LICENSE_URL="http://www.gnu.org/licenses/gpl-3.0.txt"
+			LICENSE_URL="https://www.gnu.org/licenses/gpl-3.0.txt"
 			;;
 		"lgpl21")
-			LICENSE_URL="https://www.gnu.org/licenses/lgpl-2.1.txt"
+			LICENSE_URL="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt"
 			;;
 		"lgpl3")
 			LICENSE_URL="https://www.gnu.org/licenses/lgpl-3.0.txt"
