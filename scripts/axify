@@ -144,7 +144,7 @@ fi
 
 # --- Standard project files ---
 
-if [[ ! -e AUTHORS && -n "$ADD_FILES" ]]; then
+if [[ ! -e "AUTHORS$SUFFIX" && -n "$ADD_FILES" ]]; then
 	if git --version >/dev/null 2>&1; then
 		echo "Creating \"AUTHORS$SUFFIX\" file ..."
 		echo "$(git config user.name) <$(git config user.email)>" >>"AUTHORS$SUFFIX"
