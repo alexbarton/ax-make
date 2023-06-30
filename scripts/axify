@@ -1,7 +1,8 @@
 #!/bin/bash
+# shellcheck disable=SC2250
 #
 # ax-make: Alex' Simple Makefile System
-# Copyright (c)2014-2022 Alexander Barton (alex@barton.de)
+# Copyright (c)2014-2023 Alexander Barton (alex@barton.de)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -82,13 +83,13 @@ while true; do
 	shift
 done
 
-[ $# -gt 1 ] && Usage
+[[ $# -gt 1 ]] && Usage
 
-[ -n "$1" ] && LIB_D="$1"
+[[ -n "$1" ]] && LIB_D="$1"
 
-if [ -r "/usr/local/share/ax-make/Makefile.ax" ]; then
+if [[ -r "/usr/local/share/ax-make/Makefile.ax" ]]; then
 	MAKEFILE_AX="/usr/local/share/ax-make/Makefile.ax"
-elif [ -r "/usr/share/ax-make/Makefile.ax" ]; then
+elif [[ -r "/usr/share/ax-make/Makefile.ax" ]]; then
 	MAKEFILE_AX="/usr/share/ax-make/Makefile.ax"
 else
 	echo "$NAME: No source \"Makefile.ax\" found!"
@@ -98,12 +99,12 @@ fi
 
 # -- Makefile.ax --
 
-if [ ! -d "$LIB_D" ]; then
+if [[ ! -d "$LIB_D" ]]; then
 	mkdir -pv "$LIB_D" || exit 1
 fi
 
 target="$LIB_D/$(basename "$MAKEFILE_AX")"
-if [ ! -e "$target" ] || [ "$MAKEFILE_AX" -nt "$target" ]; then
+if [[ ! -e "$target" || "$MAKEFILE_AX" -nt "$target" ]]; then
 	echo "Updating \"$target\" ..."
 	cp -v "$MAKEFILE_AX" "$target" || exit 1
 else
@@ -112,9 +113,9 @@ fi
 
 # -- Project Makefile's ---
 
-if [ ! -e "Makefile" ]; then
+if [[ ! -e "Makefile" ]]; then
 echo "Creating \"Makefile\" ..."
-[ "$LIB_D" != "." ] && subdirs="$LIB_D" || subdirs=""
+[[ "$LIB_D" != "." ]] && subdirs="$LIB_D" || subdirs=""
 cat >"Makefile" <<EOF
 #
 # Makefile
@@ -128,7 +129,7 @@ include $LIB_D/Makefile.ax
 EOF
 fi
 
-if [ "$LIB_D" != "." ] && [ ! -e "$LIB_D/Makefile" ]; then
+if [[ "$LIB_D" != "." && ! -e "$LIB_D/Makefile" ]]; then
 echo "Creating \"$LIB_D/Makefile\" ..."
 cat >"$LIB_D/Makefile" <<EOF
 #
@@ -150,7 +151,7 @@ if [[ ! -e AUTHORS && -n "$ADD_FILES" ]]; then
 	fi
 fi
 
-if [ ! -e COPYING ]; then
+if [[ ! -e COPYING ]]; then
 	LICENSE_URL=""
 	case "$LICENSE" in
 		"")
@@ -171,9 +172,9 @@ if [ ! -e COPYING ]; then
 			echo "Can't setup unknown \"$LICENSE\" license!"
 			;;
 	esac
-	[ -n "$LICENSE_URL" ] && Download "$LICENSE_URL" COPYING
+	[[ -n "$LICENSE_URL" ]] && Download "$LICENSE_URL" COPYING
 else
-	[ -n "$LICENSE" ] && echo "COPYING file already exists, skipping."
+	[[ -n "$LICENSE" ]] && echo "COPYING file already exists, skipping."
 fi
 
 files=()
@@ -184,7 +185,7 @@ if [[ -n "$ADD_FILES" ]]; then
 fi
 
 for f in "${files[@]}"; do
-	if [ ! -e "$f" ]; then
+	if [[ ! -e "$f" ]]; then
 		echo "Creating empty \"$f\" file ..."
 		touch "$f"
 	fi
